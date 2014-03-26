@@ -1,6 +1,6 @@
 package com.enymind.audio;
 
-import java.util.Arrays;
+import com.enymind.audio.gui.FFTFrame;
 import java.util.List;
 import java.util.Scanner;
 import javax.sound.sampled.AudioFormat;
@@ -13,6 +13,8 @@ import javax.sound.sampled.TargetDataLine;
  * @author Enymind Oy
  */
 public class LineInFFTtoUDP implements FFTInterruptable {
+
+  FFTFrame gui;
 
   public LineInFFTtoUDP() {
     // Searching for any input lines
@@ -50,7 +52,7 @@ public class LineInFFTtoUDP implements FFTInterruptable {
     if (line != null) {
       try {
         // AudioFormat format = line.getFormat();
-        AudioFormat format = new AudioFormat(44100, 16, 1, true, true);
+        AudioFormat format = new AudioFormat(8000.0F, 16, 1, true, false);
         line.open(format);
         line.start();
       } catch (LineUnavailableException lue) {
@@ -59,15 +61,25 @@ public class LineInFFTtoUDP implements FFTInterruptable {
       }
     }
 
+    System.out.print("Enter buffer length from 0 to 1024: ");
+    int bufferLength = input.nextInt();
+    
     // Start processing FFT in separate thread
-    Thread processor = new Thread(new LineProcessor(this, line));
+    Thread processor = new Thread(new LineProcessor(this, line, bufferLength));
     processor.start();
+
+    this.gui = new FFTFrame();
+    gui.setVisible(true);
   }
 
   @Override
   public void fftInterrupt(double[] spectrum) {
     // TODO: Implement UDP sending
-    System.out.println(Arrays.toString(spectrum));
+    // System.out.println(Arrays.toString(spectrum));
+    
+    if (this.gui != null) {
+      this.gui.fftInterrupt(spectrum);
+    }
   }
 
   /**
