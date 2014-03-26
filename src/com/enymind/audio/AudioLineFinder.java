@@ -16,6 +16,7 @@ public class AudioLineFinder {
   List<Line> inputLines;
   List<Line> outputLines;
 
+  // Find all audio input and output lines
   public AudioLineFinder() {
     this.inputLines = new ArrayList<>();
     this.outputLines = new ArrayList<>();

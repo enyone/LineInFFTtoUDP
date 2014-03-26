@@ -23,19 +23,19 @@ public class LineInFFTtoUDP implements FFTInterruptable {
 
     // If not any input lines found
     if (inputLines.size() < 1) {
-      System.err.println("Not any input lines found on your system.");
+      System.err.println("Not any input-lines found on your system.");
       System.exit(1);
     }
 
     // Ask user to select desired input line
-    System.out.println("Select one of the found audio input lines:");
+    System.out.println("Select one of the found audio input-lines:");
     int lineCounter = 0;
     for (Line line : inputLines) {
       System.out.println("[" + lineCounter + "] " + line.getLineInfo().toString());
       lineCounter++;
     }
     Scanner input = new Scanner(System.in);
-    System.out.print("Enter number of line selected: ");
+    System.out.print("Enter number of input-line you wish to select (usually 0): ");
     int lineIndex = input.nextInt();
 
     // Initialize selected input line
@@ -44,7 +44,7 @@ public class LineInFFTtoUDP implements FFTInterruptable {
       line = (TargetDataLine) inputLines.get(lineIndex);
       System.out.println("Selected: [" + lineIndex + "] " + line.getLineInfo().toString());
     } catch (ClassCastException cce) {
-      System.err.println("Selected wrong type of input line: " + cce.getMessage());
+      System.err.println("Selected wrong type of input-line: " + cce.getMessage());
       System.exit(1);
     }
 
@@ -61,7 +61,8 @@ public class LineInFFTtoUDP implements FFTInterruptable {
       }
     }
 
-    System.out.print("Enter buffer length from 0 to 1024: ");
+    // Ask desired audio data buffer size
+    System.out.print("Enter one of the buffer lengths 128, 256, 512, 1024, 2048: ");
     int bufferLength = input.nextInt();
     
     // Start processing FFT in separate thread
@@ -77,6 +78,7 @@ public class LineInFFTtoUDP implements FFTInterruptable {
     // TODO: Implement UDP sending
     // System.out.println(Arrays.toString(spectrum));
     
+    // If UI is available repaint data in it
     if (this.gui != null) {
       this.gui.fftInterrupt(spectrum);
     }

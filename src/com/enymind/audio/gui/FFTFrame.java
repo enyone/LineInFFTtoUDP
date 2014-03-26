@@ -66,6 +66,7 @@ public class FFTFrame extends javax.swing.JFrame implements FFTInterruptable {
 
   @Override
   public void fftInterrupt(double[] spectrum) {
+    // Tell Swing UI to repaint (AWT canvas)
     SwingUtilities.invokeLater(new CanvasPainter(spectrum));
   }
 
@@ -77,6 +78,7 @@ public class FFTFrame extends javax.swing.JFrame implements FFTInterruptable {
       this.spectrum = spectrum;
     }
 
+    // This will be run in EDT (event dispatch thread) for better UI performance
     @Override
     public void run() {
       int canvasWidth = FFTCanvasPanel.getWidth() / 3;
@@ -85,12 +87,14 @@ public class FFTFrame extends javax.swing.JFrame implements FFTInterruptable {
       int spectrumSize = this.spectrum.length - 1;
       int spectrumMax = 64;
 
+      // Draw thick red lines on a black background
       Graphics2D graps = (Graphics2D) FFTCanvas.getGraphics();
       graps.setColor(Color.BLACK);
       graps.fillRect(0, 0, FFTCanvasPanel.getWidth(), FFTCanvasPanel.getHeight());
       graps.setColor(Color.RED);
       graps.setStroke(new BasicStroke(10));
 
+      // One red line for each frequency in spectrum array
       int value, xPos;
       for (int i = 1; i < spectrumSize; i++) {
         value = (int) (100.0 * (this.spectrum[i] / spectrumMax));
